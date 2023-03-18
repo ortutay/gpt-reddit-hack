@@ -62,12 +62,15 @@ def get_pairs(id, limit):
 
 
 def main():
-    sub_name = 'conservative'
+    sub_name = 'politics'
     ids = get_ids(sub_name, 100)
     print(ids)
     pairs = []
-    for id in ids:
+    for i, id in enumerate(ids):
+        print('== ID', i, '==)
         pairs += get_pairs(id, 100)
+
+    pairs = sorted(pairs, key=lambda p: int(p['reply_score']), reverse=True)
 
     print('')
     print('')
