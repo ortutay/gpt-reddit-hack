@@ -1,3 +1,4 @@
+import json
 import praw
 import os
 import pprint
@@ -36,18 +37,21 @@ def get_pairs(id, limit):
     for top_level in submission.comments:
         for reply in top_level.replies:
             pairs.append({
-                'comment': top_level.body,
-                'reply': reply.body,
+                'prompt': top_level.body,
+                'completion': reply.body,
             })
+    return pairs
 
 
 def main():
     sub_name = 'politics'
-    ids = get_ids(sub_name, 5)
+    ids = get_ids(sub_name, 2)
     print(ids)
     for id in ids:
-        pairs = get_pairs(id, 10)
-    pp.pprint(pairs)
-
+        pairs = get_pairs(id, 2)
+        
+    with open('out.jsonl', 'a') as f:
+        for pair in pairs:
+            f.write(json.dumps(pair) + '\n')
 
 main()
