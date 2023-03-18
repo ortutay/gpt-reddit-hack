@@ -22,12 +22,6 @@ reddit = praw.Reddit(
     user_agent='comment extraction')
 
 
-# def get_ids(sub_name, limit):
-#     sub = reddit.subreddit(sub_name)
-#     ids = []
-#     for submission in sub.hot(limit=limit):
-#         ids.append(submission.id)
-#     return ids
 def get_ids(sub_name, limit):
     sub = reddit.subreddit(sub_name)
     ids = []
@@ -58,29 +52,29 @@ def get_pairs(id, limit):
                 'reply_score': reply.score,
                 'reply_id': reply.id,
             }
-            print('-->', pair['id'], pair['score'])
+            print('-->', pair['reply_id'], pair['reply_score'])
             pairs.append(pair)
         if (i+1) % 10 == 0:
             print(f"Processed {i+1} of {num_top_level} top-level comments...")
     print(f"Processed {num_top_level} top-level comments in total, generating {len(pairs)} pairs.")
-    pairs = sorted(pairs, key=lambda p: p['score'], reverse=True)
+    pairs = sorted(pairs, key=lambda p: int(p['reply_score']), reverse=True)
     return pairs
 
 
 def main():
-    sub_name = 'politics'
-    ids = get_ids(sub_name, 5)
+    sub_name = 'conservative'
+    ids = get_ids(sub_name, 100)
     print(ids)
     pairs = []
     for id in ids:
-        pairs += get_pairs(id, 5)
+        pairs += get_pairs(id, 100)
 
     print('')
     print('')
 
     with open('out.jsonl', 'w') as f:
         for pair in pairs:
-            print('==>', pair['id'], pair['score'])
+            print('==>', pair['reply_id'], pair['reply_score'])
             f.write(json.dumps(pair) + '\n')
 
 main()
