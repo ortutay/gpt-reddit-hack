@@ -3,8 +3,12 @@ import os
 import pprint
 
 from praw.models import MoreComments
-from dotenv import load_dotenv
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    print('could not load from dotenv')
+    pass
 
 pp = pprint.PrettyPrinter()
 
@@ -21,7 +25,6 @@ def get_ids(sub_name, limit):
     sub = reddit.subreddit(sub_name)
     ids = []
     for submission in sub.hot(limit=limit):
-        # print(submission.title, submission.id)
         ids.append(submission.id)
     return ids
 
@@ -36,20 +39,14 @@ def get_pairs(id, limit):
                 'comment': top_level.body,
                 'reply': reply.body,
             })
-            print('reply', top_level.body, '==>', reply.body)
 
 
 def main():
-    print('main')
-
     sub_name = 'politics'
     ids = get_ids(sub_name, 5)
-
     print(ids)
-
     for id in ids:
         pairs = get_pairs(id, 10)
-
     pp.pprint(pairs)
 
 
